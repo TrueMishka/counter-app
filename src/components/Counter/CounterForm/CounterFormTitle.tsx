@@ -4,7 +4,7 @@ type PropsType = {
     value: number
 }
 
-export const CounterTitle:React.FC<PropsType> = ({value}) => {
+export const CounterFormTitle:React.FC<PropsType> = ({value}) => {
     return (
         <span>{value}</span>
     );

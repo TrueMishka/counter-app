@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button} from "./../../button/Button";
-import {CounterTitle} from "./CounterTitle";
+import {CounterFormTitle} from "./CounterFormTitle";
 import classes from "./Counter.module.css";
 
 type PropsType = {
@@ -14,7 +14,7 @@ type PropsType = {
     }
 }
 
-export const Counter: React.FC<PropsType> = ({minMaxValue, error}) => {
+export const CounterForm: React.FC<PropsType> = ({minMaxValue, error}) => {
 
     const [counterValue, setCounterValue] = useState(minMaxValue.min)
 
@@ -41,7 +41,7 @@ export const Counter: React.FC<PropsType> = ({minMaxValue, error}) => {
             ? <div className={`${classes.counterValueText} ${classes.counterValueText}`}><span>{error.unSave}</span>
             </div>
             : <div className={counterValueMax}>
-                <CounterTitle value={counterValue}/>
+                <CounterFormTitle value={counterValue}/>
             </div>)
 
     return (
