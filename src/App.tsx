@@ -3,6 +3,9 @@ import './App.css';
 import {CounterSet} from "./components/Counter/CounterSet/CounterSet";
 import {CounterForm} from "./components/Counter/CounterForm/CounterForm";
 
+let localStorageMin = 0;
+let localStorageMax = 5;
+
 export type ErrorType = {
     error: boolean
     unSave: string
@@ -10,61 +13,60 @@ export type ErrorType = {
 }
 
 function App() {
-    const localStorageMin = localStorage.getItem("minCounterValue")
-    const localStorageMax = localStorage.getItem("maxCounterValue")
-    const initCounterValue = () => {
-        if (localStorageMin && localStorageMax) {
-            return {min: JSON.parse(localStorageMin), max: JSON.parse(localStorageMax)}
-        } else {
-            return {min: 0, max: 5}
-        }
-    }
-    const [counterValue, setCounterValue] = useState(initCounterValue)
+
+    const [counterValue, setCounterValue] = useState(localStorageMin)
+    const [minValue, setMinValue] = useState(localStorageMin);
+    const [maxValue, setMaxValue] = useState(localStorageMax);
     const [error, setError] = useState<ErrorType>({error: false, unSave: '', inputError: ''})
 
-    const stateValueEqualLocalValue = localStorageMin && localStorageMax
-        ? (counterValue.min === JSON.parse(localStorageMin) && counterValue.max === JSON.parse(localStorageMax))
-        : false
-    const incorrectValue = counterValue.min > counterValue.max
-        || counterValue.min === counterValue.max
-        || counterValue.min < 0
-        || counterValue.max < 0
+    const initCounterValue = () => {
+        let LSMin = localStorage.getItem("minCounterValue")
+        let LSMax = localStorage.getItem("maxCounterValue")
+
+        if (LSMin && LSMax) {
+            localStorageMin = +LSMin;
+            localStorageMax = +LSMax;
+            setMinValue(+LSMin);
+            setMaxValue(+LSMax)
+            setCounterValue(localStorageMin);
+        }
+    }
+
+    const stateValueEqualLocalValue = minValue === localStorageMin && maxValue === localStorageMax
+    const incorrectValue = minValue > maxValue || minValue === maxValue || minValue < 0 || maxValue < 0
     const disabledButton = stateValueEqualLocalValue || incorrectValue
 
     const setLocalStorageMinMaxCounterValue = () => {
-        localStorage.setItem("minCounterValue", JSON.stringify(counterValue.min))
-        localStorage.setItem("maxCounterValue", JSON.stringify(counterValue.max))
+        localStorage.setItem("minCounterValue", JSON.stringify(minValue))
+        localStorage.setItem("maxCounterValue", JSON.stringify(maxValue))
         setError({error: false, unSave: '', inputError: ''})
     }
 
     useEffect(() => {
-        if (localStorageMin && localStorageMax) {
-            setCounterValue({min: JSON.parse(localStorageMin), max: JSON.parse(localStorageMax)})
-        } else {
-            setError({...error, error: true, inputError: '', unSave: 'Enter value and press Set'})
-        }
+        initCounterValue()
     }, [])
 
     useEffect(() => {
-        if (localStorageMin && localStorageMax) {
-            counterValue.min !== JSON.parse(localStorageMin) || counterValue.max !== JSON.parse(localStorageMax)
-                ? incorrectValue
-                    ? setError({...error, error: true, inputError: 'Incorrect value!', unSave: ''})
-                    : setError({...error, error: true, inputError: '', unSave: 'Enter value and press Set'})
-                : setError({...error, error: false, inputError: '', unSave: ''})
-        }
-    }, [counterValue])
+        minValue !== localStorageMin || maxValue !== localStorageMax
+            ? incorrectValue
+                ? setError({error: true, inputError: 'Incorrect value!', unSave: ''})
+                : setError({error: true, inputError: '', unSave: 'Enter value and press Set'})
+            : setError({error: false, inputError: '', unSave: ''})
+    }, [minValue, maxValue])
 
     return (
         <div className="App">
             <CounterSet
-                counterValue={counterValue}
-                setCounterValue={setCounterValue}
+                minValue={minValue}
+                maxValue={maxValue}
+                setMinValue={setMinValue}
+                setMaxValue={setMaxValue}
                 disabledButton={disabledButton}
                 setLocalStorageCounterValue={setLocalStorageMinMaxCounterValue}
-                error={error.error}
+                error={incorrectValue}
             />
-            <CounterForm minMaxValue={counterValue} error={error}/>
+            <CounterForm counterValue={counterValue} setCounterValue={setCounterValue} minValue={minValue}
+                         maxValue={maxValue} error={error}/>
         </div>
     );
 }

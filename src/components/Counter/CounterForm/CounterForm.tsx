@@ -5,32 +5,33 @@ import classes from "./../Counter.module.css";
 import {ErrorType} from "../../../App";
 
 type PropsType = {
-    minMaxValue: {
-        min: number
-        max: number
-    }
+    counterValue: number
+    setCounterValue: (counterValue: number) => void
+    minValue: number
+    maxValue: number
     error: ErrorType
 }
 
-export const CounterForm: React.FC<PropsType> = ({minMaxValue, error}) => {
+export const CounterForm: React.FC<PropsType> = ({counterValue, setCounterValue, minValue, maxValue, error}) => {
 
-    const [counterValue, setCounterValue] = useState(minMaxValue.min)
-
-    const disabledAddButton = counterValue === minMaxValue.max || error.error
-    const disabledResetButton = counterValue === minMaxValue.min || error.error
-    const counterValueMax = `${classes.counterValue} ${classes.counterValueText} ${counterValue === minMaxValue.max ? classes.errorMax : ''}`
+    const disabledAddButton = counterValue === maxValue || error.error
+    const disabledResetButton = counterValue === minValue || error.error
+    const counterValueMax = `${classes.counterValue} ${classes.counterValueText} ${counterValue === maxValue ? classes.errorMax : ''}`
 
     useEffect(() => {
-        setCounterValue(minMaxValue.min)
-    }, [minMaxValue])
+        setCounterValue(minValue)
+    }, [minValue, maxValue])
+
     const addCounter = () => {
-        if (counterValue < minMaxValue.max) {
+        if (counterValue < maxValue) {
             setCounterValue(counterValue + 1);
         }
     }
+
     const resetCounter = () => {
-        setCounterValue(minMaxValue.min)
+        setCounterValue(minValue)
     }
+
     const counterTitle = error.inputError
         ? <div className={`${classes.counterValueText} ${classes.counterValueText}`}>
             <span>{error.inputError}</span></div>

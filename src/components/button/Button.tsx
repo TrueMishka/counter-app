@@ -8,12 +8,11 @@ type ButtonPropsType = {
 }
 
 export const Button: React.FC<ButtonPropsType> = (props) => {
+
     const {callBack, disabled, children} = props;
     const classStyle = `${classes.button} ${disabled ? classes.buttonDisabled : ''}`
-    const onClickHandler = () => {
-        callBack()
-    }
+
     return (
-        <button onClick={onClickHandler} className={classStyle} disabled={disabled}>{children}</button>
+        <button onClick={callBack} className={classStyle} disabled={disabled}>{children}</button>
     );
 };
