@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import classes from "./../CounterForm/Counter.module.css";
+import React from 'react';
+import classes from "./../Counter.module.css";
 import {Input} from "../../input/Input";
 import {Button} from "../../button/Button";
 
@@ -14,9 +14,17 @@ type PropsType = {
     setCounterValue: (counterValue: CounterType) => void
     disabledButton: boolean
     setLocalStorageCounterValue: () => void
+    error: boolean
 }
 
-export const CounterSet: React.FC<PropsType> = ({counterValue, setCounterValue, disabledButton, setLocalStorageCounterValue}) => {
+export const CounterSet: React.FC<PropsType> = (
+    {
+        counterValue,
+        setCounterValue,
+        disabledButton,
+        setLocalStorageCounterValue,
+        error
+    }) => {
 
     const onChangeMinValue = (value: number) => {
         setCounterValue({...counterValue, min: value})
@@ -25,16 +33,11 @@ export const CounterSet: React.FC<PropsType> = ({counterValue, setCounterValue, 
         setCounterValue({...counterValue, max: value})
     }
 
-
     return (
-        <div className={classes.counter}>
+        <div className={classes.counterItem}>
             <div>
-                <span>min value</span>
-                <Input value={counterValue.min} onChange={onChangeMinValue}/>
-            </div>
-            <div>
-                <span>max value</span>
-                <Input value={counterValue.max} onChange={onChangeMaxValue}/>
+                <Input value={counterValue.min} onChange={onChangeMinValue} title={'Min'} error={error}/>
+                <Input value={counterValue.max} onChange={onChangeMaxValue} title={'Max'} error={error}/>
             </div>
             <div>
                 <Button callBack={setLocalStorageCounterValue} disabled={disabledButton}>Set</Button>

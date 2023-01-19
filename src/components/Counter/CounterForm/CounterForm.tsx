@@ -1,27 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import {Button} from "./../../button/Button";
 import {CounterFormTitle} from "./CounterFormTitle";
-import classes from "./Counter.module.css";
+import classes from "./../Counter.module.css";
+import {ErrorType} from "../../../App";
 
 type PropsType = {
     minMaxValue: {
         min: number
         max: number
     }
-    error: {
-        unSave: string
-        inputError: string
-    }
+    error: ErrorType
 }
 
 export const CounterForm: React.FC<PropsType> = ({minMaxValue, error}) => {
 
     const [counterValue, setCounterValue] = useState(minMaxValue.min)
 
+    const disabledAddButton = counterValue === minMaxValue.max || error.error
+    const disabledResetButton = counterValue === minMaxValue.min || error.error
+    const counterValueMax = `${classes.counterValue} ${classes.counterValueText} ${counterValue === minMaxValue.max ? classes.errorMax : ''}`
+
     useEffect(() => {
         setCounterValue(minMaxValue.min)
     }, [minMaxValue])
-
     const addCounter = () => {
         if (counterValue < minMaxValue.max) {
             setCounterValue(counterValue + 1);
@@ -30,10 +31,6 @@ export const CounterForm: React.FC<PropsType> = ({minMaxValue, error}) => {
     const resetCounter = () => {
         setCounterValue(minMaxValue.min)
     }
-
-    const disabledAddButton = counterValue === minMaxValue.max
-    const disabledResetButton = counterValue === minMaxValue.min
-    const counterValueMax = `${classes.counterValue} ${classes.counterValueText} ${counterValue === minMaxValue.max ? classes.errorMax : ''}`
     const counterTitle = error.inputError
         ? <div className={`${classes.counterValueText} ${classes.counterValueText}`}>
             <span>{error.inputError}</span></div>
@@ -45,7 +42,7 @@ export const CounterForm: React.FC<PropsType> = ({minMaxValue, error}) => {
             </div>)
 
     return (
-        <div className={classes.counter}>
+        <div className={classes.counterItem}>
             <h3>Counter</h3>
             {counterTitle}
             <div>
